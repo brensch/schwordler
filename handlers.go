@@ -21,7 +21,11 @@ func (s *store) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	word := "beast"
+	word, err := s.GuessWord(prevGuesses.Guesses, prevGuesses.Results)
+	if err != nil {
+		s.log.WithError(err).Error("problem guessing word")
+		return
+	}
 
 	log.Println("based on previous state, i will make the completely random guess:", word)
 
