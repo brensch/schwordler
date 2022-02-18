@@ -1,5 +1,5 @@
-github.com/brensch/battleword v0.3.3 h1:EYB8nyPcjA915vMVKP1yrJhuWe5d7GI17+BrF76Aves=
-github.com/brensch/battleword v0.3.3/go.mod h1:S6E0vl1CDEcA10CQAwNopK6u4jRMLvPN7M5l73U+I9o=
+github.com/brensch/battleword v0.4.1 h1:HEDw9SaPoHTFdfZvTazyZXhm55yjVR7OcNFOcPXTRm0=
+github.com/brensch/battleword v0.4.1/go.mod h1:S6E0vl1CDEcA10CQAwNopK6u4jRMLvPN7M5l73U+I9o=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=

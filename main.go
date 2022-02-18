@@ -25,6 +25,7 @@ func main() {
 
 	http.HandleFunc("/guess", s.HandleDoGuess)
 	http.HandleFunc("/results", s.HandleReceiveResults)
+	http.HandleFunc("/ping", s.HandleDoPing)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 	if err != nil {

@@ -59,3 +59,23 @@ func (s *store) HandleReceiveResults(w http.ResponseWriter, r *http.Request) {
 	log.Println("the game concluded, and the engine sent me the final state for all players:", string(finalStateJSON))
 
 }
+
+func (s *store) HandleDoPing(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != http.MethodGet {
+		return
+	}
+
+	log.Println("received ping")
+
+	definition := &battleword.PlayerDefinition{
+		Name:        "schwordler",
+		Description: "the brave",
+	}
+
+	err := json.NewEncoder(w).Encode(definition)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+}
