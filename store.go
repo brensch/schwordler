@@ -7,7 +7,12 @@ type store struct {
 }
 
 func initStore() *store {
+	format := new(logrus.TextFormatter)
+	format.FullTimestamp = true
+	logger := logrus.StandardLogger()
+	logger.SetLevel(logrus.DebugLevel)
+	logger.SetFormatter(format)
 	return &store{
-		log: logrus.NewEntry(logrus.StandardLogger()),
+		log: logrus.NewEntry(logger),
 	}
 }

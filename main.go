@@ -23,6 +23,8 @@ func main() {
 
 	s := initStore()
 
+	s.log.Debug("starting")
+
 	http.HandleFunc("/guess", s.HandleDoGuess)
 	http.HandleFunc("/results", s.HandleReceiveResults)
 	http.HandleFunc("/ping", s.HandleDoPing)
