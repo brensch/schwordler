@@ -27,8 +27,6 @@ func (s *store) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("based on previous state, i will make the completely random guess:", word)
-
 	guess := battleword.Guess{
 		Guess: word,
 		Shout: RandomShout(),
@@ -47,16 +45,30 @@ func (s *store) HandleReceiveResults(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var finalState battleword.Match
+	var finalState battleword.PlayerMatchResults
 	err := json.NewDecoder(r.Body).Decode(&finalState)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	finalStateJSON, _ := json.Marshal(finalState)
+	var us *battleword.Player
+	for _, player := range finalState.Results.Players {
+		if player.ID == finalState.PlayerID {
+			us = player
+		}
+	}
 
-	log.Println("the game concluded, and the engine sent me the final state for all players:", string(finalStateJSON))
+	if us == nil {
+		log.Println("we weren't in the results. strange")
+		return
+	}
+
+	// log.Println("the game concluded, and the engine sent me the final state for all players:", string(finalStateJSON))
+	log.Println("our final statistics were:")
+	log.Printf("accuracy: %f%%", 100*float64(us.Summary.GamesWon)/float64(len(finalState.Results.Games)))
+	log.Printf("speed: %s", us.Summary.TotalTime)
+	log.Printf("average guesses: %f", float64(us.Summary.TotalGuesses)/float64(len(finalState.Results.Games)))
 
 }
 
