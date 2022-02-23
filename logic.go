@@ -13,11 +13,20 @@ func (s *store) GuessWord(prevGuesses []string, prevResults [][]int) (string, er
 		return "", err
 	}
 
+	// for each possible word we need to see what the probability of each combination is
+
 	if len(words) == 0 {
 		return "", fmt.Errorf("got no possible words. something is up.")
 	}
 
 	return words[0], nil
+}
+
+func (s *store) GetWordDistribution(prevGuesses []string, prevResults [][]int) (string, error) {
+
+	//
+
+	return "", nil
 }
 
 func (s *store) GetPossibleWords(prevGuesses []string, prevResults [][]int) ([]string, error) {
