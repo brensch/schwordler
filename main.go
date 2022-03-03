@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	port = "8080"
+	port     = "8080"
+	AllWords = append(CommonWords, HardWords...)
 )
 
 func init() {

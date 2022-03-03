@@ -21,7 +21,7 @@ func (s *store) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	word, err := s.GuessWord(prevGuesses.Guesses, prevGuesses.Results)
+	word, err := s.GuessWord2(prevGuesses.Guesses, prevGuesses.Results)
 	if err != nil {
 		s.log.WithError(err).Error("problem guessing word")
 		return
