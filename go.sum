@@ -1,7 +1,5 @@
-github.com/brensch/battleword v0.4.1 h1:HEDw9SaPoHTFdfZvTazyZXhm55yjVR7OcNFOcPXTRm0=
-github.com/brensch/battleword v0.4.1/go.mod h1:S6E0vl1CDEcA10CQAwNopK6u4jRMLvPN7M5l73U+I9o=
-github.com/brensch/battleword v0.5.1 h1:+GBXl/vhwXyB76gs+nk3lH4sKQ5+ZSEmXqN0x3WFqyo=
-github.com/brensch/battleword v0.5.1/go.mod h1:S6E0vl1CDEcA10CQAwNopK6u4jRMLvPN7M5l73U+I9o=
+github.com/brensch/battleword v0.6.0 h1:wlB7GlqLw/3uAIPB6AlXYSVZ6KiK2jH9uj+ZKZvyYG4=
+github.com/brensch/battleword v0.6.0/go.mod h1:mmUtFTn8+6iuMD7dXR2UOrF/a4ETHPmPexN8CHm57SI=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
@@ -13,5 +11,5 @@ github.com/sirupsen/logrus v1.8.1/go.mod h1:yWOB1SBYBC5VeMP7gHvWumXLIWorT60ONWic
 github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 golang.org/x/sys v0.0.0-20191026070338-33540a1f6037/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-golang.org/x/sys v0.0.0-20220209214540-3681064d5158 h1:rm+CHSpPEEW2IsXUib1ThaHIjuBVZjxNgSKmBLFfD4c=
-golang.org/x/sys v0.0.0-20220209214540-3681064d5158/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9 h1:nhht2DYV/Sn3qOayu8lM+cU1ii9sTLUeBQwQQfUHtrs=
+golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
