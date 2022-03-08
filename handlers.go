@@ -14,18 +14,19 @@ func (s *store) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var prevGuesses battleword.PlayerGameState
-	err := json.NewDecoder(r.Body).Decode(&prevGuesses)
+	var gameState battleword.PlayerGameState
+	err := json.NewDecoder(r.Body).Decode(&gameState)
 	if err != nil {
 		s.log.WithError(err).Error("could not decode prevGuesses from engine")
 		return
 	}
 
-	word, err := s.GuessWord2(prevGuesses.Guesses, prevGuesses.Results)
+	word, err := s.GuessWord2(gameState.GuessResults)
 	if err != nil {
 		s.log.WithError(err).Error("problem guessing word")
 		return
 	}
+	// fmt.Println(word)
 
 	guess := battleword.Guess{
 		Guess: word,
@@ -52,23 +53,23 @@ func (s *store) HandleReceiveResults(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var us *battleword.Player
-	for _, player := range finalState.Results.Players {
-		if player.ID == finalState.PlayerID {
-			us = player
-		}
-	}
+	// var us *battleword.Player
+	// for _, player := range finalState.Results.Players {
+	// 	if player.ID == finalState.PlayerID {
+	// 		us = player
+	// 	}
+	// }
 
-	if us == nil {
-		log.Println("we weren't in the results. strange")
-		return
-	}
+	// if us == nil {
+	// 	log.Println("we weren't in the results. strange")
+	// 	return
+	// }
 
 	// log.Println("the game concluded, and the engine sent me the final state for all players:", string(finalStateJSON))
 	log.Println("our final statistics were:")
-	log.Printf("accuracy: %f%%", 100*float64(us.Summary.GamesWon)/float64(len(finalState.Results.Games)))
-	log.Printf("speed: %s", us.Summary.TotalTime)
-	log.Printf("average guesses: %f", float64(us.Summary.TotalGuesses)/float64(len(finalState.Results.Games)))
+	// log.Printf("accuracy: %f%%", 100*float64(us.Summary.GamesWon)/float64(len(finalState.Results.Games)))
+	// log.Printf("speed: %s", us.Summary.TotalTime)
+	// log.Printf("average guesses: %f", float64(us.Summary.TotalGuesses)/float64(len(finalState.Results.Games)))
 
 }
 

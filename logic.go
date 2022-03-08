@@ -6,9 +6,9 @@ import (
 	"github.com/brensch/battleword"
 )
 
-func (s *store) GuessWord(prevGuesses []string, prevResults [][]int) (string, error) {
+func (s *store) GuessWord(prevGuessResults []battleword.GuessResult) (string, error) {
 
-	words, err := s.GetPossibleWords(prevGuesses, prevResults)
+	words, err := s.GetPossibleWords(prevGuessResults)
 	if err != nil {
 		return "", err
 	}
@@ -22,13 +22,13 @@ func (s *store) GuessWord(prevGuesses []string, prevResults [][]int) (string, er
 	return words[0], nil
 }
 
-func (s *store) GuessWord2(prevGuesses []string, prevResults [][]int) (string, error) {
+func (s *store) GuessWord2(prevGuessResults []battleword.GuessResult) (string, error) {
 
-	if len(prevGuesses) == 0 {
+	if len(prevGuessResults) == 0 {
 		return "crane", nil
 	}
 
-	possibleAnswers, err := s.GetPossibleWords(prevGuesses, prevResults)
+	possibleAnswers, err := s.GetPossibleWords(prevGuessResults)
 	if err != nil {
 		return "", err
 	}
@@ -74,15 +74,15 @@ func (s *store) GuessWord2(prevGuesses []string, prevResults [][]int) (string, e
 	return bestWord, nil
 }
 
-func (s *store) GetPossibleWords(prevGuesses []string, prevResults [][]int) ([]string, error) {
+func (s *store) GetPossibleWords(prevGuessResults []battleword.GuessResult) ([]string, error) {
 
 	possibleWords := CommonWords
 
-	for i, prevGuess := range prevGuesses {
+	for _, prevGuessResult := range prevGuessResults {
 
 		var newPossibleWords []string
 		for _, newGuess := range possibleWords {
-			if WordPossible(newGuess, prevGuess, prevResults[i]) {
+			if WordPossible(newGuess, prevGuessResult) {
 				// fmt.Println(newGuess, prevGuess, prevResults[i])
 				newPossibleWords = append(newPossibleWords, newGuess)
 			}
@@ -144,11 +144,10 @@ type ResultOdds struct {
 
 func (s *store) GetWordDistribution(word string, possibleAnswers []string) [][]string {
 
-	var result []int
 	distribution := make([][]string, IntPow(3, len(word)))
 	for _, possibleAnswer := range possibleAnswers {
-		result = battleword.GetResult(word, possibleAnswer)
-		resultCode := ResultToCode(result)
+		result := battleword.GetResult(word, possibleAnswer)
+		resultCode := ResultToCode(result.Result)
 		distribution[resultCode] = append(distribution[resultCode], possibleAnswer)
 	}
 
@@ -157,11 +156,10 @@ func (s *store) GetWordDistribution(word string, possibleAnswers []string) [][]s
 
 func (s *store) GetWordDistributionCount(word string, possibleAnswers []string) []int {
 
-	var result []int
 	distribution := make([]int, IntPow(3, len(word)))
 	for _, possibleAnswer := range possibleAnswers {
-		result = battleword.GetResult(word, possibleAnswer)
-		resultCode := ResultToCode(result)
+		result := battleword.GetResult(word, possibleAnswer)
+		resultCode := ResultToCode(result.Result)
 		distribution[resultCode]++
 	}
 
@@ -181,19 +179,19 @@ func (s *store) GetDistributionExpectedRemainingAnswers(wordCount int, distribut
 	return expectedRemainingAnswer
 }
 
-func WordPossible(newGuess, prevGuess string, prevResult []int) bool {
+func WordPossible(newGuess string, prevGuessResult battleword.GuessResult) bool {
 
 	// i figured this out by looking at all the results. kinda cool. plz don't steal.
-	newResult := battleword.GetResult(prevGuess, newGuess)
+	newResult := battleword.GetResult(prevGuessResult.Guess, newGuess)
 	// fmt.Println(newGuess, prevGuess)
 	// fmt.Println(newResult)
 	// fmt.Println(prevResult)
 	for i := 0; i < len(newGuess); i++ {
-		if newResult[i] > prevResult[i] {
+		if newResult.Result[i] > prevGuessResult.Result[i] {
 			return false
 		}
 
-		if prevResult[i] == 2 && newResult[i] < 2 {
+		if prevGuessResult.Result[i] == 2 && newResult.Result[i] < 2 {
 			return false
 		}
 	}

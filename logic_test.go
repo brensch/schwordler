@@ -8,35 +8,34 @@ import (
 )
 
 type wordPossibleCase struct {
-	new        string
-	prev       string
-	result     []int
-	isPossible bool
+	new         string
+	guessResult battleword.GuessResult
+	isPossible  bool
 }
 
 var (
 	wordPossibleCases = []wordPossibleCase{
-		{"beast", "beast", []int{0, 2, 2, 2, 2}, false},
-		{"beast", "beast", []int{2, 2, 2, 2, 2}, true},
-		{"digit", "beast", []int{2, 2, 2, 2, 2}, false},
-		{"pbliy", "beast", []int{1, 0, 0, 0, 0}, true},
-		{"eefts", "beast", []int{0, 1, 0, 1, 0}, false},
-		{"effff", "beest", []int{0, 1, 0, 0, 0}, true},
-		{"effef", "beest", []int{0, 1, 0, 0, 0}, false},
-		{"iouuu", "beast", []int{0, 1, 0, 0, 0}, true},
-		{"feast", "beast", []int{0, 2, 2, 2, 2}, true},
-		{"feest", "fstee", []int{2, 1, 1, 1, 1}, true},
-		{"maybj", "fstee", []int{2, 0, 0, 0, 0}, false},
+		{"beast", battleword.GuessResult{"beast", []int{0, 2, 2, 2, 2}}, false},
+		{"beast", battleword.GuessResult{"beast", []int{2, 2, 2, 2, 2}}, true},
+		{"digit", battleword.GuessResult{"beast", []int{2, 2, 2, 2, 2}}, false},
+		{"pbliy", battleword.GuessResult{"beast", []int{1, 0, 0, 0, 0}}, true},
+		{"eefts", battleword.GuessResult{"beast", []int{0, 1, 0, 1, 0}}, false},
+		{"effff", battleword.GuessResult{"beest", []int{0, 1, 0, 0, 0}}, true},
+		{"effef", battleword.GuessResult{"beest", []int{0, 1, 0, 0, 0}}, false},
+		{"iouuu", battleword.GuessResult{"beast", []int{0, 1, 0, 0, 0}}, true},
+		{"feast", battleword.GuessResult{"beast", []int{0, 2, 2, 2, 2}}, true},
+		{"feest", battleword.GuessResult{"fstee", []int{2, 1, 1, 1, 1}}, true},
+		{"maybj", battleword.GuessResult{"fstee", []int{2, 0, 0, 0, 0}}, false},
 	}
 )
 
 func TestWordPossible(t *testing.T) {
 
 	for _, wordPossibleCase := range wordPossibleCases {
-		possible := WordPossible(wordPossibleCase.new, wordPossibleCase.prev, wordPossibleCase.result)
+		possible := WordPossible(wordPossibleCase.new, wordPossibleCase.guessResult)
 		fmt.Println(possible)
 		if possible != wordPossibleCase.isPossible {
-			t.Log("got wrong result", wordPossibleCase.new, wordPossibleCase.prev)
+			t.Log("got wrong result", wordPossibleCase.new, wordPossibleCase.guessResult.Guess)
 			t.Fail()
 		}
 	}
@@ -45,26 +44,20 @@ func TestWordPossible(t *testing.T) {
 
 func BenchmarkWordPossible(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		WordPossible("beast", "beast", []int{2, 2, 1, 1, 1})
+		WordPossible("beast", battleword.GuessResult{"beast", []int{2, 2, 1, 1, 1}})
 	}
 }
 
 func TestGuessWord(t *testing.T) {
 	s := &store{}
 
-	prevGuesses := []string{
-		"beast",
-		"found",
-		"laugh",
+	prevGuesses := []battleword.GuessResult{
+		{"beast", []int{0, 0, 1, 0, 0}},
+		{"found", []int{0, 0, 2, 0, 0}},
+		{"laugh", []int{1, 2, 2, 0, 0}},
 	}
 
-	prevResults := [][]int{
-		{0, 0, 1, 0, 0},
-		{0, 0, 2, 0, 0},
-		{1, 2, 2, 0, 0},
-	}
-
-	possibleWords, err := s.GetPossibleWords(prevGuesses, prevResults)
+	possibleWords, err := s.GuessWord(prevGuesses)
 	if err != nil {
 		t.Log(err)
 		t.Fail()
@@ -75,39 +68,31 @@ func TestGuessWord(t *testing.T) {
 func TestGuessWord2(t *testing.T) {
 	s := &store{}
 
-	prevGuesses := []string{
-		"beast",
+	prevGuesses := []battleword.GuessResult{
+		{"beast", []int{0, 0, 1, 0, 0}},
+		{"found", []int{0, 0, 2, 0, 0}},
+		{"laugh", []int{1, 2, 2, 0, 0}},
 	}
 
-	prevResults := [][]int{
-		{0, 0, 1, 0, 0},
-	}
-
-	guess, err := s.GuessWord2(prevGuesses, prevResults)
+	possibleWords, err := s.GuessWord2(prevGuesses)
 	if err != nil {
 		t.Log(err)
 		t.Fail()
 	}
-	t.Log(guess)
+	t.Log(possibleWords)
 }
 
 func BenchmarkGuessWord(b *testing.B) {
 
 	s := &store{}
 
-	prevGuesses := []string{
-		"beast",
-		"found",
-		"laugh",
-	}
-
-	prevResults := [][]int{
-		{0, 0, 1, 0, 0},
-		{0, 0, 2, 0, 0},
-		{1, 2, 2, 0, 0},
+	prevGuesses := []battleword.GuessResult{
+		{"beast", []int{0, 0, 1, 0, 0}},
+		{"found", []int{0, 0, 2, 0, 0}},
+		{"laugh", []int{1, 2, 2, 0, 0}},
 	}
 	for i := 0; i < b.N; i++ {
-		s.GetPossibleWords(prevGuesses, prevResults)
+		s.GetPossibleWords(prevGuesses)
 	}
 }
 
@@ -164,13 +149,12 @@ func TestGuessWordFull(t *testing.T) {
 
 	s := &store{}
 
-	var prevGuesses []string
-	var prevResults [][]int
+	var prevGuessResults []battleword.GuessResult
 
 	answer := "event"
 
 	for {
-		guess, err := s.GuessWord2(prevGuesses, prevResults)
+		guess, err := s.GuessWord2(prevGuessResults)
 		if err != nil {
 			t.Log(err)
 			t.FailNow()
@@ -178,23 +162,21 @@ func TestGuessWordFull(t *testing.T) {
 
 		result := battleword.GetResult(guess, answer)
 
-		prevGuesses = append(prevGuesses, guess)
-		prevResults = append(prevResults, result)
+		prevGuessResults = append(prevGuessResults, result)
 		if guess == answer {
 			t.Log("got the answer")
 			break
 		}
 
-		if len(prevGuesses) == 6 {
+		if len(prevGuessResults) == 6 {
 			break
 		}
 
 	}
 
-	t.Logf("finished in %d turns, %+v", len(prevGuesses), prevGuesses)
-	for i, j := range prevResults {
-		fmt.Println(prevGuesses[i])
-		fmt.Println(j)
+	t.Logf("finished in %d turns, %+v", len(prevGuessResults), prevGuessResults)
+	for _, guessResult := range prevGuessResults {
+		fmt.Println(guessResult.Guess, guessResult.Result)
 	}
 
 }
