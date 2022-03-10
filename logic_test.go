@@ -65,23 +65,6 @@ func TestGuessWord(t *testing.T) {
 	t.Log(possibleWords)
 }
 
-func TestGuessWord2(t *testing.T) {
-	s := &store{}
-
-	prevGuesses := []battleword.GuessResult{
-		{"beast", []int{0, 0, 1, 0, 0}},
-		{"found", []int{0, 0, 2, 0, 0}},
-		{"laugh", []int{1, 2, 2, 0, 0}},
-	}
-
-	possibleWords, err := s.GuessWord2(prevGuesses)
-	if err != nil {
-		t.Log(err)
-		t.Fail()
-	}
-	t.Log(possibleWords)
-}
-
 func BenchmarkGuessWord(b *testing.B) {
 
 	s := &store{}
@@ -154,7 +137,7 @@ func TestGuessWordFull(t *testing.T) {
 	answer := "event"
 
 	for {
-		guess, err := s.GuessWord2(prevGuessResults)
+		guess, err := s.GuessWord(prevGuessResults)
 		if err != nil {
 			t.Log(err)
 			t.FailNow()

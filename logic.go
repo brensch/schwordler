@@ -8,22 +8,6 @@ import (
 
 func (s *store) GuessWord(prevGuessResults []battleword.GuessResult) (string, error) {
 
-	words, err := s.GetPossibleWords(prevGuessResults)
-	if err != nil {
-		return "", err
-	}
-
-	// for each possible word we need to see what the probability of each combination is
-
-	if len(words) == 0 {
-		return "", fmt.Errorf("got no possible words. something is up.")
-	}
-
-	return words[0], nil
-}
-
-func (s *store) GuessWord2(prevGuessResults []battleword.GuessResult) (string, error) {
-
 	if len(prevGuessResults) == 0 {
 		return "crane", nil
 	}
@@ -37,8 +21,6 @@ func (s *store) GuessWord2(prevGuessResults []battleword.GuessResult) (string, e
 		return possibleAnswers[0], nil
 	}
 
-	// fmt.Println(len(possibleAnswers))
-
 	expectedRemainingWords := make([]float64, len(possibleAnswers))
 	distributions := make([][][]string, len(possibleAnswers))
 	for i, guess := range possibleAnswers {
@@ -46,10 +28,6 @@ func (s *store) GuessWord2(prevGuessResults []battleword.GuessResult) (string, e
 		expectedRemainingWords[i] = s.GetDistributionExpectedRemainingAnswers(len(possibleAnswers), distribution)
 		distributions[i] = distribution
 	}
-	// if len(possibleAnswers) < 1000 {
-	// 	fmt.Println(possibleAnswers)
-	// 	// fmt.Println(expectedRemainingWords)
-	// }
 
 	var bestWord string
 	bestWordExpectedRemaining := float64(len(possibleAnswers))
@@ -57,19 +35,9 @@ func (s *store) GuessWord2(prevGuessResults []battleword.GuessResult) (string, e
 		if expectedRemainingWord <= bestWordExpectedRemaining {
 			bestWord = possibleAnswers[i]
 			bestWordExpectedRemaining = expectedRemainingWord
-
-			// if bestWord == "zygon" {
-
-			// 	for j, wordlist := range distributions[i] {
-			// 		fmt.Println(CodeToResult(j), wordlist)
-			// 	}
-			// }
-			// fmt.Println(bestWord, bestWordExpectedRemaining)
 		}
 
 	}
-
-	// fmt.Println(bestWordExpectedRemaining)
 
 	return bestWord, nil
 }
@@ -83,7 +51,6 @@ func (s *store) GetPossibleWords(prevGuessResults []battleword.GuessResult) ([]s
 		var newPossibleWords []string
 		for _, newGuess := range possibleWords {
 			if WordPossible(newGuess, prevGuessResult) {
-				// fmt.Println(newGuess, prevGuess, prevResults[i])
 				newPossibleWords = append(newPossibleWords, newGuess)
 			}
 

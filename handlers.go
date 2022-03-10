@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -21,12 +22,15 @@ func (s *store) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	word, err := s.GuessWord2(gameState.GuessResults)
+	gameStateBytes, _ := json.Marshal(gameState)
+	fmt.Println(string(gameStateBytes))
+
+	word, err := s.GuessWord(gameState.GuessResults)
 	if err != nil {
 		s.log.WithError(err).Error("problem guessing word")
 		return
 	}
-	// fmt.Println(word)
+	fmt.Println(word)
 
 	guess := battleword.Guess{
 		Guess: word,
