@@ -2,8 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/brensch/battleword"
@@ -23,15 +21,11 @@ func (api *api) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	gameStateBytes, _ := json.Marshal(gameState)
-	fmt.Println(string(gameStateBytes))
-
 	word, err := api.s.GuessWord(gameState.GuessResults)
 	if err != nil {
 		api.s.Log.WithError(err).Error("problem guessing word")
 		return
 	}
-	fmt.Println(word)
 
 	guess := battleword.Guess{
 		Guess: word,
@@ -40,7 +34,7 @@ func (api *api) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(guess)
 	if err != nil {
-		log.Println(err)
+		api.s.Log.WithError(err).Error("couldn't encode guess")
 		return
 	}
 }
@@ -54,7 +48,7 @@ func (api *api) HandleReceiveResults(w http.ResponseWriter, r *http.Request) {
 	var finalState battleword.PlayerMatchResults
 	err := json.NewDecoder(r.Body).Decode(&finalState)
 	if err != nil {
-		log.Println(err)
+		api.s.Log.WithError(err).Error("couldn't decode results")
 		return
 	}
 
@@ -71,7 +65,7 @@ func (api *api) HandleReceiveResults(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	// log.Println("the game concluded, and the engine sent me the final state for all players:", string(finalStateJSON))
-	log.Println("our final statistics were:")
+	// log.Println("our final statistics were:")
 	// log.Printf("accuracy: %f%%", 100*float64(uapi.s.Summary.GamesWon)/float64(len(finalState.Resultapi.s.Games)))
 	// log.Printf("speed: %s", uapi.s.Summary.TotalTime)
 	// log.Printf("average guesses: %f", float64(uapi.s.Summary.TotalGuesses)/float64(len(finalState.Resultapi.s.Games)))
@@ -84,7 +78,7 @@ func (api *api) HandleDoPing(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("received ping")
+	api.s.Log.Info("pinged")
 
 	definition := &battleword.PlayerDefinition{
 		Name:        "schwordler",
@@ -93,7 +87,7 @@ func (api *api) HandleDoPing(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewEncoder(w).Encode(definition)
 	if err != nil {
-		log.Println(err)
+		api.s.Log.WithError(err).Error("couldn't decode ping")
 		return
 	}
 }

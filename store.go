@@ -3,16 +3,12 @@ package schwordler
 import "github.com/sirupsen/logrus"
 
 type Store struct {
-	Log *logrus.Entry
+	Log logrus.FieldLogger
 }
 
-func InitStore() *Store {
-	format := new(logrus.TextFormatter)
-	format.FullTimestamp = true
-	logger := logrus.StandardLogger()
-	logger.SetLevel(logrus.DebugLevel)
-	logger.SetFormatter(format)
+func InitStore(log logrus.FieldLogger) *Store {
+
 	return &Store{
-		Log: logrus.NewEntry(logger),
+		Log: log,
 	}
 }

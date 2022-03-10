@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/brensch/schwordler"
 	"github.com/sirupsen/logrus"
@@ -37,7 +37,24 @@ func main() {
 	// EnvVarService should always be set when running in a cloud run instance
 	onCloud := service != ""
 
-	s := schwordler.InitStore()
+	log := logrus.New()
+	log.SetLevel(logrus.DebugLevel)
+	log.SetFormatter(&logrus.JSONFormatter{
+		DisableTimestamp: false,
+		TimestampFormat:  time.RFC3339Nano,
+		// This is required for google logs to correctly assess log severity
+		FieldMap: logrus.FieldMap{
+			logrus.FieldKeyLevel: "severity",
+		},
+	})
+	if !onCloud {
+		log.SetFormatter(&logrus.TextFormatter{
+			FullTimestamp:   true,
+			TimestampFormat: time.RFC3339Nano,
+		})
+	}
+
+	s := schwordler.InitStore(log)
 
 	s.Log.WithFields(logrus.Fields{
 		"revision":      revision,
@@ -55,7 +72,7 @@ func main() {
 
 	err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 	if err != nil {
-		log.Println(err)
+		s.Log.WithError(err).Error("failed to start api")
 	}
 
 }
