@@ -7,9 +7,10 @@ import (
 	"net/http"
 
 	"github.com/brensch/battleword"
+	"github.com/brensch/schwordler"
 )
 
-func (s *store) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
+func (api *api) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
 		return
@@ -18,23 +19,23 @@ func (s *store) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 	var gameState battleword.PlayerGameState
 	err := json.NewDecoder(r.Body).Decode(&gameState)
 	if err != nil {
-		s.log.WithError(err).Error("could not decode prevGuesses from engine")
+		api.s.Log.WithError(err).Error("could not decode prevGuesses from engine")
 		return
 	}
 
 	gameStateBytes, _ := json.Marshal(gameState)
 	fmt.Println(string(gameStateBytes))
 
-	word, err := s.GuessWord(gameState.GuessResults)
+	word, err := api.s.GuessWord(gameState.GuessResults)
 	if err != nil {
-		s.log.WithError(err).Error("problem guessing word")
+		api.s.Log.WithError(err).Error("problem guessing word")
 		return
 	}
 	fmt.Println(word)
 
 	guess := battleword.Guess{
 		Guess: word,
-		Shout: RandomShout(),
+		Shout: schwordler.RandomShout(),
 	}
 
 	err = json.NewEncoder(w).Encode(guess)
@@ -44,7 +45,7 @@ func (s *store) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *store) HandleReceiveResults(w http.ResponseWriter, r *http.Request) {
+func (api *api) HandleReceiveResults(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
 		return
@@ -58,26 +59,26 @@ func (s *store) HandleReceiveResults(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// var us *battleword.Player
-	// for _, player := range finalState.Results.Players {
+	// for _, player := range finalState.Resultapi.s.Players {
 	// 	if player.ID == finalState.PlayerID {
 	// 		us = player
 	// 	}
 	// }
 
 	// if us == nil {
-	// 	log.Println("we weren't in the results. strange")
+	// 	log.Println("we weren't in the resultapi.s. strange")
 	// 	return
 	// }
 
 	// log.Println("the game concluded, and the engine sent me the final state for all players:", string(finalStateJSON))
 	log.Println("our final statistics were:")
-	// log.Printf("accuracy: %f%%", 100*float64(us.Summary.GamesWon)/float64(len(finalState.Results.Games)))
-	// log.Printf("speed: %s", us.Summary.TotalTime)
-	// log.Printf("average guesses: %f", float64(us.Summary.TotalGuesses)/float64(len(finalState.Results.Games)))
+	// log.Printf("accuracy: %f%%", 100*float64(uapi.s.Summary.GamesWon)/float64(len(finalState.Resultapi.s.Games)))
+	// log.Printf("speed: %s", uapi.s.Summary.TotalTime)
+	// log.Printf("average guesses: %f", float64(uapi.s.Summary.TotalGuesses)/float64(len(finalState.Resultapi.s.Games)))
 
 }
 
-func (s *store) HandleDoPing(w http.ResponseWriter, r *http.Request) {
+func (api *api) HandleDoPing(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodGet {
 		return

@@ -1,6 +1,8 @@
-package main
+package schwordler
 
 var (
+	AllWords = append(CommonWords, HardWords...)
+
 	CommonWords = []string{
 		"cigar",
 		"rebut",
@@ -164,7 +166,7 @@ var (
 		"wrote",
 		"clock",
 		"tilde",
-		"store",
+		"Store",
 		"prove",
 		"bring",
 		"solve",

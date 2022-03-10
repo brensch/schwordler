@@ -1,4 +1,4 @@
-package main
+package schwordler
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/brensch/battleword"
 )
 
-func (s *store) GuessWord(prevGuessResults []battleword.GuessResult) (string, error) {
+func (s *Store) GuessWord(prevGuessResults []battleword.GuessResult) (string, error) {
 
 	if len(prevGuessResults) == 0 {
 		return "crane", nil
@@ -42,7 +42,7 @@ func (s *store) GuessWord(prevGuessResults []battleword.GuessResult) (string, er
 	return bestWord, nil
 }
 
-func (s *store) GetPossibleWords(prevGuessResults []battleword.GuessResult) ([]string, error) {
+func (s *Store) GetPossibleWords(prevGuessResults []battleword.GuessResult) ([]string, error) {
 
 	possibleWords := CommonWords
 
@@ -109,7 +109,7 @@ type ResultOdds struct {
 	Words  []string
 }
 
-func (s *store) GetWordDistribution(word string, possibleAnswers []string) [][]string {
+func (s *Store) GetWordDistribution(word string, possibleAnswers []string) [][]string {
 
 	distribution := make([][]string, IntPow(3, len(word)))
 	for _, possibleAnswer := range possibleAnswers {
@@ -121,7 +121,7 @@ func (s *store) GetWordDistribution(word string, possibleAnswers []string) [][]s
 	return distribution
 }
 
-func (s *store) GetWordDistributionCount(word string, possibleAnswers []string) []int {
+func (s *Store) GetWordDistributionCount(word string, possibleAnswers []string) []int {
 
 	distribution := make([]int, IntPow(3, len(word)))
 	for _, possibleAnswer := range possibleAnswers {
@@ -133,7 +133,7 @@ func (s *store) GetWordDistributionCount(word string, possibleAnswers []string) 
 	return distribution
 }
 
-func (s *store) GetDistributionExpectedRemainingAnswers(wordCount int, distribution [][]string) float64 {
+func (s *Store) GetDistributionExpectedRemainingAnswers(wordCount int, distribution [][]string) float64 {
 
 	expectedRemainingAnswer := float64(0)
 

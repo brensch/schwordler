@@ -1,4 +1,4 @@
-package main
+package schwordler
 
 import (
 	"fmt"
@@ -49,7 +49,7 @@ func BenchmarkWordPossible(b *testing.B) {
 }
 
 func TestGuessWord(t *testing.T) {
-	s := &store{}
+	s := &Store{}
 
 	prevGuesses := []battleword.GuessResult{
 		{"beast", []int{0, 0, 1, 0, 0}},
@@ -67,7 +67,7 @@ func TestGuessWord(t *testing.T) {
 
 func BenchmarkGuessWord(b *testing.B) {
 
-	s := &store{}
+	s := &Store{}
 
 	prevGuesses := []battleword.GuessResult{
 		{"beast", []int{0, 0, 1, 0, 0}},
@@ -93,7 +93,7 @@ func TestResultToInt(t *testing.T) {
 }
 
 func TestGetWordDistribution(t *testing.T) {
-	s := &store{}
+	s := &Store{}
 
 	word := "beast"
 	distribution := s.GetWordDistribution(word, AllWords)
@@ -105,7 +105,7 @@ func TestGetWordDistribution(t *testing.T) {
 }
 
 func BenchmarkGetWordDistribution(b *testing.B) {
-	s := &store{}
+	s := &Store{}
 
 	word := "beast"
 
@@ -117,7 +117,7 @@ func BenchmarkGetWordDistribution(b *testing.B) {
 }
 
 func BenchmarkGetWordDistributionCount(b *testing.B) {
-	s := &store{}
+	s := &Store{}
 
 	word := "beast"
 
@@ -130,7 +130,7 @@ func BenchmarkGetWordDistributionCount(b *testing.B) {
 
 func TestGuessWordFull(t *testing.T) {
 
-	s := &store{}
+	s := &Store{}
 
 	var prevGuessResults []battleword.GuessResult
 
@@ -166,7 +166,7 @@ func TestGuessWordFull(t *testing.T) {
 
 func TestGetDistributionExpectedRemainingAnswers(t *testing.T) {
 
-	s := &store{}
+	s := &Store{}
 
 	word := "adieu"
 	distribution := s.GetWordDistribution(word, AllWords)

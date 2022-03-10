@@ -1,34 +1,57 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/brensch/schwordler"
+	"github.com/sirupsen/logrus"
 )
 
-var (
-	port     = "8080"
-	AllWords = append(CommonWords, HardWords...)
+const (
+	// cloud run specific env vars
+	// the vendor lock in is real
+	EnvVarService       = "K_SERVICE"
+	EnvVarRevision      = "K_REVISION"
+	EnvVarConfiguration = "K_CONFIGURATION"
+	EnvVarPort          = "PORT"
+
+	defaultPort = "8080"
 )
 
-func init() {
-
-	flag.StringVar(&port, "port", port, "port to listen for games on")
-
+type api struct {
+	s *schwordler.Store
 }
 
 func main() {
 
-	flag.Parse()
+	service := os.Getenv(EnvVarService)
+	revision := os.Getenv(EnvVarRevision)
+	configuration := os.Getenv(EnvVarConfiguration)
+	port := os.Getenv(EnvVarPort)
+	if port == "" {
+		port = defaultPort
+	}
+	// EnvVarService should always be set when running in a cloud run instance
+	onCloud := service != ""
 
-	s := initStore()
+	s := schwordler.InitStore()
 
-	s.log.Debug("starting")
+	s.Log.WithFields(logrus.Fields{
+		"revision":      revision,
+		"configuration": configuration,
+		"harambe":       onCloud,
+	}).Info("starting")
 
-	http.HandleFunc("/guess", s.HandleDoGuess)
-	http.HandleFunc("/results", s.HandleReceiveResults)
-	http.HandleFunc("/ping", s.HandleDoPing)
+	a := &api{
+		s: s,
+	}
+
+	http.HandleFunc("/guess", a.HandleDoGuess)
+	http.HandleFunc("/results", a.HandleReceiveResults)
+	http.HandleFunc("/ping", a.HandleDoPing)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 	if err != nil {
