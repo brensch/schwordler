@@ -2312,7 +2312,7 @@ var (
 		"rural",
 		"shave",
 	}
-	AllWords = []string{
+	HardWords = []string{
 		"aahed",
 		"aalii",
 		"aargh",
