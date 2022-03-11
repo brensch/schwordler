@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/brensch/battleword"
 	"github.com/brensch/schwordler"
@@ -34,7 +33,6 @@ func (api *api) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 		Shout: schwordler.RandomShout(),
 	}
 
-	time.Sleep(100 * time.Millisecond)
 	err = json.NewEncoder(w).Encode(guess)
 	if err != nil {
 		api.s.Log.WithError(err).Error("couldn't encode guess")
