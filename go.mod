@@ -3,7 +3,7 @@ module github.com/brensch/schwordler
 go 1.17
 
 require (
-	github.com/brensch/battleword v0.9.4
+	github.com/brensch/battleword v0.11.1
 	github.com/sirupsen/logrus v1.8.1
 )
 

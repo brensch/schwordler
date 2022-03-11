@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/brensch/battleword"
 	"github.com/brensch/schwordler"
@@ -32,6 +34,7 @@ func (api *api) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 		Shout: schwordler.RandomShout(),
 	}
 
+	time.Sleep(100 * time.Millisecond)
 	err = json.NewEncoder(w).Encode(guess)
 	if err != nil {
 		api.s.Log.WithError(err).Error("couldn't encode guess")
@@ -51,6 +54,9 @@ func (api *api) HandleReceiveResults(w http.ResponseWriter, r *http.Request) {
 		api.s.Log.WithError(err).Error("couldn't decode results")
 		return
 	}
+
+	ye, _ := json.Marshal(finalState)
+	fmt.Println(string(ye))
 
 	// var us *battleword.Player
 	// for _, player := range finalState.Resultapi.s.Players {

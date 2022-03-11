@@ -114,7 +114,7 @@ func (s *Store) GetWordDistribution(word string, possibleAnswers []string) [][]s
 	distribution := make([][]string, IntPow(3, len(word)))
 	for _, possibleAnswer := range possibleAnswers {
 		result := battleword.GetResult(word, possibleAnswer)
-		resultCode := ResultToCode(result.Result)
+		resultCode := ResultToCode(result)
 		distribution[resultCode] = append(distribution[resultCode], possibleAnswer)
 	}
 
@@ -126,7 +126,7 @@ func (s *Store) GetWordDistributionCount(word string, possibleAnswers []string) 
 	distribution := make([]int, IntPow(3, len(word)))
 	for _, possibleAnswer := range possibleAnswers {
 		result := battleword.GetResult(word, possibleAnswer)
-		resultCode := ResultToCode(result.Result)
+		resultCode := ResultToCode(result)
 		distribution[resultCode]++
 	}
 
@@ -154,11 +154,11 @@ func WordPossible(newGuess string, prevGuessResult battleword.GuessResult) bool 
 	// fmt.Println(newResult)
 	// fmt.Println(prevResult)
 	for i := 0; i < len(newGuess); i++ {
-		if newResult.Result[i] > prevGuessResult.Result[i] {
+		if newResult[i] > prevGuessResult.Result[i] {
 			return false
 		}
 
-		if prevGuessResult.Result[i] == 2 && newResult.Result[i] < 2 {
+		if prevGuessResult.Result[i] == 2 && newResult[i] < 2 {
 			return false
 		}
 	}

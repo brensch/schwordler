@@ -3,6 +3,7 @@ package schwordler
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/brensch/battleword"
 )
@@ -15,17 +16,17 @@ type wordPossibleCase struct {
 
 var (
 	wordPossibleCases = []wordPossibleCase{
-		{"beast", battleword.GuessResult{"beast", []int{0, 2, 2, 2, 2}}, false},
-		{"beast", battleword.GuessResult{"beast", []int{2, 2, 2, 2, 2}}, true},
-		{"digit", battleword.GuessResult{"beast", []int{2, 2, 2, 2, 2}}, false},
-		{"pbliy", battleword.GuessResult{"beast", []int{1, 0, 0, 0, 0}}, true},
-		{"eefts", battleword.GuessResult{"beast", []int{0, 1, 0, 1, 0}}, false},
-		{"effff", battleword.GuessResult{"beest", []int{0, 1, 0, 0, 0}}, true},
-		{"effef", battleword.GuessResult{"beest", []int{0, 1, 0, 0, 0}}, false},
-		{"iouuu", battleword.GuessResult{"beast", []int{0, 1, 0, 0, 0}}, true},
-		{"feast", battleword.GuessResult{"beast", []int{0, 2, 2, 2, 2}}, true},
-		{"feest", battleword.GuessResult{"fstee", []int{2, 1, 1, 1, 1}}, true},
-		{"maybj", battleword.GuessResult{"fstee", []int{2, 0, 0, 0, 0}}, false},
+		{"beast", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{0, 2, 2, 2, 2}}, false},
+		{"beast", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{2, 2, 2, 2, 2}}, true},
+		{"digit", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{2, 2, 2, 2, 2}}, false},
+		{"pbliy", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{1, 0, 0, 0, 0}}, true},
+		{"eefts", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{0, 1, 0, 1, 0}}, false},
+		{"effff", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beest", []int{0, 1, 0, 0, 0}}, true},
+		{"effef", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beest", []int{0, 1, 0, 0, 0}}, false},
+		{"iouuu", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{0, 1, 0, 0, 0}}, true},
+		{"feast", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{0, 2, 2, 2, 2}}, true},
+		{"feest", battleword.GuessResult{"id", time.Time{}, time.Time{}, "fstee", []int{2, 1, 1, 1, 1}}, true},
+		{"maybj", battleword.GuessResult{"id", time.Time{}, time.Time{}, "fstee", []int{2, 0, 0, 0, 0}}, false},
 	}
 )
 
@@ -44,7 +45,7 @@ func TestWordPossible(t *testing.T) {
 
 func BenchmarkWordPossible(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		WordPossible("beast", battleword.GuessResult{"beast", []int{2, 2, 1, 1, 1}})
+		WordPossible("beast", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{2, 2, 1, 1, 1}})
 	}
 }
 
@@ -52,9 +53,9 @@ func TestGuessWord(t *testing.T) {
 	s := &Store{}
 
 	prevGuesses := []battleword.GuessResult{
-		{"beast", []int{0, 0, 1, 0, 0}},
-		{"found", []int{0, 0, 2, 0, 0}},
-		{"laugh", []int{1, 2, 2, 0, 0}},
+		{"id", time.Time{}, time.Time{}, "beast", []int{0, 0, 1, 0, 0}},
+		{"id", time.Time{}, time.Time{}, "found", []int{0, 0, 2, 0, 0}},
+		{"id", time.Time{}, time.Time{}, "laugh", []int{1, 2, 2, 0, 0}},
 	}
 
 	possibleWords, err := s.GuessWord(prevGuesses)
@@ -70,9 +71,9 @@ func BenchmarkGuessWord(b *testing.B) {
 	s := &Store{}
 
 	prevGuesses := []battleword.GuessResult{
-		{"beast", []int{0, 0, 1, 0, 0}},
-		{"found", []int{0, 0, 2, 0, 0}},
-		{"laugh", []int{1, 2, 2, 0, 0}},
+		{"id", time.Time{}, time.Time{}, "beast", []int{0, 0, 1, 0, 0}},
+		{"id", time.Time{}, time.Time{}, "found", []int{0, 0, 2, 0, 0}},
+		{"id", time.Time{}, time.Time{}, "laugh", []int{1, 2, 2, 0, 0}},
 	}
 	for i := 0; i < b.N; i++ {
 		s.GetPossibleWords(prevGuesses)
@@ -144,8 +145,12 @@ func TestGuessWordFull(t *testing.T) {
 		}
 
 		result := battleword.GetResult(guess, answer)
+		guessResult := battleword.GuessResult{
+			Result: result,
+			Guess:  guess,
+		}
 
-		prevGuessResults = append(prevGuessResults, result)
+		prevGuessResults = append(prevGuessResults, guessResult)
 		if guess == answer {
 			t.Log("got the answer")
 			break
