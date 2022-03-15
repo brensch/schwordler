@@ -1,6 +1,7 @@
 package schwordler
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 	"time"
@@ -9,34 +10,41 @@ import (
 )
 
 type wordPossibleCase struct {
-	new         string
-	guessResult battleword.GuessResult
-	isPossible  bool
+	new        string
+	prevWord   string
+	prevResult []int
+	// guessResult battleword.GuessResult
+	isPossible bool
 }
 
 var (
 	wordPossibleCases = []wordPossibleCase{
-		{"beast", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{0, 2, 2, 2, 2}}, false},
-		{"beast", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{2, 2, 2, 2, 2}}, true},
-		{"digit", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{2, 2, 2, 2, 2}}, false},
-		{"pbliy", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{1, 0, 0, 0, 0}}, true},
-		{"eefts", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{0, 1, 0, 1, 0}}, false},
-		{"effff", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beest", []int{0, 1, 0, 0, 0}}, true},
-		{"effef", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beest", []int{0, 1, 0, 0, 0}}, false},
-		{"iouuu", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{0, 1, 0, 0, 0}}, true},
-		{"feast", battleword.GuessResult{"id", time.Time{}, time.Time{}, "beast", []int{0, 2, 2, 2, 2}}, true},
-		{"feest", battleword.GuessResult{"id", time.Time{}, time.Time{}, "fstee", []int{2, 1, 1, 1, 1}}, true},
-		{"maybj", battleword.GuessResult{"id", time.Time{}, time.Time{}, "fstee", []int{2, 0, 0, 0, 0}}, false},
+		{"beast", "beast", []int{0, 2, 2, 2, 2}, false},
+		{"beast", "beast", []int{2, 2, 2, 2, 2}, true},
+		{"digit", "beast", []int{2, 2, 2, 2, 2}, false},
+		{"pbliy", "beast", []int{1, 0, 0, 0, 0}, true},
+		{"eefts", "beast", []int{0, 1, 0, 1, 0}, false},
+		{"effff", "beest", []int{0, 1, 0, 0, 0}, true},
+		{"effef", "beest", []int{0, 1, 0, 0, 0}, false},
+		{"iouuu", "beast", []int{0, 1, 0, 0, 0}, false},
+		{"feast", "beast", []int{0, 2, 2, 2, 2}, true},
+		{"feest", "fstee", []int{2, 1, 1, 1, 1}, true},
+		{"maybj", "fstee", []int{2, 0, 0, 0, 0}, false},
+		{"dopey", "boney", []int{0, 2, 1, 2, 2}, false},
 	}
 )
 
 func TestWordPossible(t *testing.T) {
 
 	for _, wordPossibleCase := range wordPossibleCases {
-		possible := WordPossible(wordPossibleCase.new, wordPossibleCase.guessResult)
+		guessResult := battleword.GuessResult{
+			Guess:  wordPossibleCase.prevWord,
+			Result: wordPossibleCase.prevResult,
+		}
+		possible := WordPossible(wordPossibleCase.new, guessResult)
 		fmt.Println(possible)
 		if possible != wordPossibleCase.isPossible {
-			t.Log("got wrong result", wordPossibleCase.new, wordPossibleCase.guessResult.Guess)
+			t.Log("got wrong result", wordPossibleCase.new, guessResult.Guess)
 			t.Fail()
 		}
 	}
@@ -135,7 +143,7 @@ func TestGuessWordFull(t *testing.T) {
 
 	var prevGuessResults []battleword.GuessResult
 
-	answer := "event"
+	answer := "pound"
 
 	for {
 		guess, err := s.GuessWord(prevGuessResults)
@@ -143,6 +151,7 @@ func TestGuessWordFull(t *testing.T) {
 			t.Log(err)
 			t.FailNow()
 		}
+		fmt.Println("guessing", guess)
 
 		result := battleword.GetResult(guess, answer)
 		guessResult := battleword.GuessResult{
@@ -155,6 +164,9 @@ func TestGuessWordFull(t *testing.T) {
 			t.Log("got the answer")
 			break
 		}
+
+		prevResultsBytes, _ := json.Marshal(prevGuessResults)
+		fmt.Println(string(prevResultsBytes))
 
 		if len(prevGuessResults) == 6 {
 			break
@@ -177,4 +189,27 @@ func TestGetDistributionExpectedRemainingAnswers(t *testing.T) {
 	distribution := s.GetWordDistribution(word, AllWords)
 
 	fmt.Println(s.GetDistributionExpectedRemainingAnswers(len(AllWords), distribution))
+}
+
+func TestSingleState(t *testing.T) {
+	s := &Store{}
+
+	raw := []byte(`
+	[{"start":"0001-01-01T00:00:00Z","finish":"0001-01-01T00:00:00Z","guess":"crane","result":[0,0,0,1,1]},{"start":"0001-01-01T00:00:00Z","finish":"0001-01-01T00:00:00Z","guess":"islet","result":[0,1,0,2,0]},{"start":"0001-01-01T00:00:00Z","finish":"0001-01-01T00:00:00Z","guess":"women","result":[0,2,0,2,1]},{"start":"0001-01-01T00:00:00Z","finish":"0001-01-01T00:00:00Z","guess":"boney","result":[0,2,1,2,2]}]
+`)
+
+	var state []battleword.GuessResult
+	err := json.Unmarshal(raw, &state)
+	if err != nil {
+		t.Log(err)
+		t.FailNow()
+	}
+
+	possibleAnswers, err := s.GetPossibleWords(state)
+	if err != nil {
+		t.Log(err)
+		t.FailNow()
+	}
+	fmt.Println(possibleAnswers)
+
 }

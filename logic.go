@@ -150,17 +150,14 @@ func WordPossible(newGuess string, prevGuessResult battleword.GuessResult) bool 
 
 	// i figured this out by looking at all the results. kinda cool. plz don't steal.
 	newResult := battleword.GetResult(prevGuessResult.Guess, newGuess)
-	// fmt.Println(newGuess, prevGuess)
-	// fmt.Println(newResult)
-	// fmt.Println(prevResult)
+	// fmt.Println("---")
+	// fmt.Println("new", newGuess, newResult)
+	// fmt.Println("pre", prevGuessResult.Guess, prevGuessResult.Result)
 	for i := 0; i < len(newGuess); i++ {
-		if newResult[i] > prevGuessResult.Result[i] {
+		if newResult[i] != prevGuessResult.Result[i] {
 			return false
 		}
 
-		if prevGuessResult.Result[i] == 2 && newResult[i] < 2 {
-			return false
-		}
 	}
 
 	return true

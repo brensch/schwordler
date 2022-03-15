@@ -41,7 +41,7 @@ func main() {
 
 			if guess == answer {
 				allResults[i] = results
-				fmt.Println("guessed it", answer)
+				// fmt.Println("guessed it", answer)
 				break
 			}
 
