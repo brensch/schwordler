@@ -88,6 +88,7 @@ func (api *api) HandleDoPing(w http.ResponseWriter, r *http.Request) {
 		Name:                "schwordler",
 		Description:         "the brave",
 		ConcurrentConnLimit: 10,
+		Colour:              "#4b2860",
 	}
 
 	err := json.NewEncoder(w).Encode(definition)
