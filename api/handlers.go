@@ -22,7 +22,7 @@ func (api *api) HandleDoGuess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	word, err := api.s.GuessWord(gameState.GuessResults)
+	word, err := api.s.GuessWord(gameState.GuessResults, "crane")
 	if err != nil {
 		api.s.Log.WithError(err).Error("problem guessing word")
 		return
@@ -85,8 +85,9 @@ func (api *api) HandleDoPing(w http.ResponseWriter, r *http.Request) {
 	api.s.Log.Info("pinged")
 
 	definition := &battleword.PlayerDefinition{
-		Name:        "schwordler",
-		Description: "the brave",
+		Name:                "schwordler",
+		Description:         "the brave",
+		ConcurrentConnLimit: 10,
 	}
 
 	err := json.NewEncoder(w).Encode(definition)

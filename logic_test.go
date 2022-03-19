@@ -66,7 +66,7 @@ func TestGuessWord(t *testing.T) {
 		{"id", time.Time{}, time.Time{}, "laugh", []int{1, 2, 2, 0, 0}},
 	}
 
-	possibleWords, err := s.GuessWord(prevGuesses)
+	possibleWords, err := s.GuessWord(prevGuesses, "crane")
 	if err != nil {
 		t.Log(err)
 		t.Fail()
@@ -146,7 +146,7 @@ func TestGuessWordFull(t *testing.T) {
 	answer := "pound"
 
 	for {
-		guess, err := s.GuessWord(prevGuessResults)
+		guess, err := s.GuessWord(prevGuessResults, "crane")
 		if err != nil {
 			t.Log(err)
 			t.FailNow()

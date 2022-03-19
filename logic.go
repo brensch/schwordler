@@ -6,10 +6,10 @@ import (
 	"github.com/brensch/battleword"
 )
 
-func (s *Store) GuessWord(prevGuessResults []battleword.GuessResult) (string, error) {
+func (s *Store) GuessWord(prevGuessResults []battleword.GuessResult, defaultFirst string) (string, error) {
 
 	if len(prevGuessResults) == 0 {
-		return "crane", nil
+		return defaultFirst, nil
 	}
 
 	possibleAnswers, err := s.GetPossibleWords(prevGuessResults)
